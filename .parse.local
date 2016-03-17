@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "ChatServer": {
+      "applicationId": "OsKcj2YYqUJiMDLm4eaXCFEnAWjkYIDzgiHgXxkY"
+    },
+    "_default": {
+      "link": "ChatServer"
+    }
+  }
+}

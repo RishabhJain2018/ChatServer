@@ -1,0 +1,134 @@
+<html>
+<head>
+	<meta name="description" content="My Parse App">
+	<meta name="viewport" content="width=device-width">
+	<script type="text/javascript" src="https://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<title> ChatServer </title>
+	<style>
+	label {
+	font-weight: bold;
+	font-size: 1em;
+	}
+	p {
+	font-weight: bold;
+	font-size: 1.5em;
+	}
+	#header {
+	text-align:center;
+	font-size:1.75em;
+	font-weight:bold;
+	}
+	.mainContainer {
+	display :inline;
+	}
+	</style>
+</head>
+<body background="bg.jpg">
+
+<div id="header" >
+<h3>Chat Application</h3>
+</div>
+
+<br>
+
+<div class="mainContainer">
+<label>Name:</label>
+<input type="text" id="name" class="form-control" placeholder="Enter Your Name">
+</div>
+
+<div class="mainContainer">
+<label>Message :</label>
+<input type="text" id="message" class="form-control" placeholder="Type your text here">
+</div>
+
+<button onclick="send()" >SEND MESSAGE</button>
+
+<p>New Messages :</p>
+
+<div id="newMessage">
+
+</div>
+
+
+
+</body>
+<script>
+	Parse.initialize("OsKcj2YYqUJiMDLm4eaXCFEnAWjkYIDzgiHgXxkY", "ig2fLlmHQaRGlG5QCCBEbUhEhoikG3HnCet479ux");
+var date;
+
+	date=new Date();
+	console.log(date);
+
+function send()
+{
+	var name=$("#name").val();
+	var message=$("#message").val();
+	console.log(message);
+	$("#message").val("");
+                if(message){
+				var chat = Parse.Object.extend("chat");
+				var query1 = new chat();
+				query1.save({"name":name,"message":message},
+						{
+							"success":function(object)
+							{
+								console.log("success")
+							}
+						,
+
+							"error":function(object)
+							{
+								console.log("error")
+							}
+						}
+				)
+                }
+
+}
+
+
+
+function recieve()
+{
+	var chat1 = Parse.Object.extend("chat");
+	var query1 = new Parse.Query(chat1);
+	query1.greaterThan("createdAt",date.toISOString());
+	query1.ascending("createdAt");
+	query1.find({
+
+				success: function(results) {
+
+					for(var i=0;i<results.length;i++)
+					{
+                        $("<p>"+results[i].get("name")+" : "+results[i].get("message")+"</p>").appendTo("#newMessage");
+					}
+					if(results.length!=0)
+					date=results[results.length-1].createdAt;
+
+
+				},
+				error:function(results)
+				{
+					console.log(results)
+				}
+
+			}
+	)
+
+}
+
+	setInterval(recieve, 2000);
+
+
+	function run() {
+		Parse.Cloud.run('hello', {}, {
+			success: function (result) {
+				console.log("success");
+			},
+			error: function (error) {
+			}
+		});
+	}
+</script>
+</html>
